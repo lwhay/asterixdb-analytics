@@ -51,12 +51,12 @@ public class AsterixDBLSMBTreeDataflowHelper extends LSMBTreeDataflowHelper {
                 resourceID = addLocalResource();
             }
 
-            index = lcManager.getIndex(resourceName);
+            index = lcManager.getIndex(resourcePath);
             if (index == null) {
                 index = createIndexInstance();
-                lcManager.register(resourceName, index);
+                lcManager.register(resourcePath, index);
             }
-            lcManager.open(resourceName);
+            lcManager.open(resourcePath);
         }
     }
 
@@ -64,13 +64,13 @@ public class AsterixDBLSMBTreeDataflowHelper extends LSMBTreeDataflowHelper {
     public void close() throws HyracksDataException {
         synchronized (lcManager) {
             // Closes the resource first.
-            lcManager.close(resourceName);
+            lcManager.close(resourcePath);
 
             // Cleanup things associated with the resource.
-            index = lcManager.getIndex(resourceName);
+            index = lcManager.getIndex(resourcePath);
             if (index != null) {
                 // Unregister will deactivate the index.
-                lcManager.unregister(resourceName);
+                lcManager.unregister(resourcePath);
             }
         }
     }
@@ -78,8 +78,10 @@ public class AsterixDBLSMBTreeDataflowHelper extends LSMBTreeDataflowHelper {
     private long addLocalResource() throws HyracksDataException {
         long resourceID = resourceIdFactory.createId();
         ILocalResourceFactory localResourceFactory = opDesc.getLocalResourceFactoryProvider().getLocalResourceFactory();
-        localResourceRepository
-                .insert(localResourceFactory.createLocalResource(resourceID, file.getFile().getPath(), partition));
+        localResourceRepository.insert(localResourceFactory.createLocalResource(resourceID, file.getFile().getPath(),
+                partition, resourcePath));
+        /*localResourceRepository
+                .insert(localResourceFactory.createLocalResource(resourceID, file.getFile().getPath(), partition));*/
         return resourceID;
     }
 }

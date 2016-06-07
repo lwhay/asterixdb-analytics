@@ -21,6 +21,7 @@ import org.apache.hyracks.api.comm.IFrameWriter;
 import org.apache.hyracks.api.exceptions.HyracksDataException;
 import org.apache.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
 import org.apache.hyracks.dataflow.common.comm.util.FrameUtils;
+
 import edu.uci.ics.pregelix.api.io.Pointable;
 
 public class FrameTupleUtils {
@@ -34,7 +35,8 @@ public class FrameTupleUtils {
     public static void flushPointableKeyValueTuple(IFrameFieldAppender appender, IFrameWriter writer, Pointable key,
             Pointable value) throws HyracksDataException {
         if (!flushPointableKeyValueTupleInternal(appender, key, value)) {
-            appender.flush(writer, true);
+            appender.flush(writer);
+            //appender.flush(writer, true);
             if (!flushPointableKeyValueTupleInternal(appender, key, value)) {
                 throw new IllegalStateException();
             }
@@ -54,7 +56,8 @@ public class FrameTupleUtils {
 
     public static void flushTuplesFinal(IFrameFieldAppender appender, IFrameWriter writer) throws HyracksDataException {
         if (appender.getTupleCount() > 0) {
-            appender.flush(writer, true);
+            appender.flush(writer);
+            //appender.flush(writer, true);
         }
     }
 }

@@ -27,7 +27,7 @@ import org.apache.asterix.api.common.AsterixHyracksIntegrationUtil;
 import org.apache.asterix.common.config.AsterixPropertiesAccessor;
 import org.apache.asterix.common.config.AsterixTransactionProperties;
 import org.apache.asterix.common.config.GlobalConfig;
-import org.apache.asterix.external.dataset.adapter.FileSystemBasedAdapter;
+import org.apache.asterix.external.util.ExternalDataConstants;
 import org.apache.asterix.external.util.IdentitiyResolverFactory;
 import org.apache.asterix.testframework.context.TestCaseContext;
 import org.apache.commons.io.FileUtils;
@@ -96,7 +96,7 @@ public class ConnectorTest {
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("initializing pseudo cluster");
         }
-        AsterixHyracksIntegrationUtil.init();
+        AsterixHyracksIntegrationUtil.init(true);
 
         if (LOGGER.isLoggable(Level.INFO)) {
             LOGGER.info("initializing HDFS");
@@ -104,7 +104,8 @@ public class ConnectorTest {
 
         // Set the node resol ver to be the identity resolver that expects node names
         // to be node controller ids; a valid assumption in test environment.
-        System.setProperty(FileSystemBasedAdapter.NODE_RESOLVER_FACTORY_PROPERTY,
+        System.setProperty(
+                /*FileSystemBasedAdapter.NODE_RESOLVER_FACTORY_PROPERTY*/ExternalDataConstants.NODE_RESOLVER_FACTORY_PROPERTY,
                 IdentitiyResolverFactory.class.getName());
 
         // Starts HDFS
@@ -144,7 +145,7 @@ public class ConnectorTest {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        AsterixHyracksIntegrationUtil.deinit();
+        AsterixHyracksIntegrationUtil.deinit(true);
         File outdir = new File(PATH_ACTUAL);
         File[] files = outdir.listFiles();
         if (files == null || files.length == 0) {

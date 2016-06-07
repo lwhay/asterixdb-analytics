@@ -16,6 +16,7 @@
 package edu.uci.ics.hyracks.imru.util;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.hyracks.api.context.IHyracksJobletContext;
 import org.apache.hyracks.api.context.IHyracksTaskContext;
@@ -114,8 +115,8 @@ public class DelegateHyracksTaskContext implements IHyracksTaskContext {
     }
 
     @Override
-    public void sendApplicationMessageToCC(byte[] arg0, DeploymentId arg1, String arg2) throws Exception {
-        delegate.sendApplicationMessageToCC(arg0, arg1, arg2);
+    public void sendApplicationMessageToCC(byte[] arg0, DeploymentId arg1) throws Exception {
+        delegate.sendApplicationMessageToCC(arg0, arg1);
     }
 
     @Override
@@ -127,5 +128,20 @@ public class DelegateHyracksTaskContext implements IHyracksTaskContext {
     public ByteBuffer reallocateFrame(ByteBuffer tobeDeallocate, int newSizeInBytes, boolean copyOldData)
             throws HyracksDataException {
         return delegate.reallocateFrame(tobeDeallocate, newSizeInBytes, copyOldData);
+    }
+
+    @Override
+    public ExecutorService getExecutorService() {
+        return delegate.getExecutorService();
+    }
+
+    @Override
+    public Object getSharedObject() {
+        return delegate.getExecutorService();
+    }
+
+    @Override
+    public void setSharedObject(Object arg0) {
+        delegate.setSharedObject(arg0);
     }
 }
