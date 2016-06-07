@@ -44,10 +44,10 @@ public class Centroid implements Serializable {
             x /= c.count;
             y /= c.count;
         }
-        if (Math.abs(x-this.x)<1E-10&&Math.abs(y-this.y)<1E-10)
+        if (Math.abs(x - this.x) < 1E-10 && Math.abs(y - this.y) < 1E-10)
             return false;
-        this.x=x;
-        this.y=y;
+        this.x = x;
+        this.y = y;
         return true;
     }
 

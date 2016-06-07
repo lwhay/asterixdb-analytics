@@ -67,7 +67,9 @@ import org.apache.hyracks.dataflow.std.connectors.OneToOneConnectorDescriptor;
 import org.apache.hyracks.dataflow.std.file.ConstantFileSplitProvider;
 import org.apache.hyracks.dataflow.std.file.FileSplit;
 import org.apache.hyracks.dataflow.std.file.IFileSplitProvider;
+import org.apache.hyracks.dataflow.std.group.HashSpillableTableFactory;
 import org.apache.hyracks.dataflow.std.group.IAggregatorDescriptorFactory;
+import org.apache.hyracks.dataflow.std.group.external.ExternalGroupOperatorDescriptor;
 import org.apache.hyracks.dataflow.std.group.preclustered.PreclusteredGroupOperatorDescriptor;
 import org.apache.hyracks.dataflow.std.group.sort.SortGroupByOperatorDescriptor;
 import org.apache.hyracks.dataflow.std.misc.ConstantTupleSourceOperatorDescriptor;
@@ -1127,6 +1129,8 @@ public abstract class JobGen implements IJobGen {
         INormalizedKeyComputerFactory nkmFactory = JobGenUtil.getINormalizedKeyComputerFactory(conf);
         IBinaryComparatorFactory[] sortCmpFactories = new IBinaryComparatorFactory[1];
         sortCmpFactories[0] = JobGenUtil.getIBinaryComparatorFactory(iteration, vertexIdClass);
+        IBinaryHashFunctionFamily[] groupHashFamily = new IBinaryHashFunctionFamily[1];
+        groupHashFamily[0] = JobGenUtil.getIBinaryHashFunctionFamily(iteration, vertexIdClass);
         RecordDescriptor rdUnnestedMessage = DataflowUtils.getRecordDescriptorFromKeyValueClasses(conf,
                 vertexIdClass.getName(), messageValueClass.getName());
         RecordDescriptor rdCombinedMessage = DataflowUtils.getRecordDescriptorFromKeyValueClasses(conf,
@@ -1146,7 +1150,7 @@ public abstract class JobGen implements IJobGen {
                     this.getConfigurationFactory(), false, true);
             IOperatorDescriptor localGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields,
                     keyFields, nkmFactory, sortCmpFactories, localAggregatorFactory, partialAggregatorFactory,
-                    rdCombinedMessage, rdCombinedMessage, false/*, Algorithm.QUICK_SORT*/);
+                    rdCombinedMessage, rdCombinedMessage, false);
             setLocationConstraint(spec, localGby);
 
             /**
@@ -1163,24 +1167,17 @@ public abstract class JobGen implements IJobGen {
                         sortCmpFactories, nkmFactory), localGby, 0, globalGby, 0);
                 return Pair.of(localGby, globalGby);
             } else {
-                /*IOperatorDescriptor globalGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields,
-                        keyFields, nkmFactory, sortCmpFactories, partialAggregatorFactory, finalAggregatorFactory,
-                        rdCombinedMessage, rdFinal, true, Algorithm.QUICK_SORT);*/
                 IOperatorDescriptor globalGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields,
                         keyFields, nkmFactory, sortCmpFactories, partialAggregatorFactory, finalAggregatorFactory,
-                        rdCombinedMessage, rdFinal, true/*, Algorithm.QUICK_SORT*/);
-                /*SortGroupByOperatorDescriptor(IOperatorDescriptorRegistry spec, int framesLimit, int[] sortFields,
-                        int[] groupFields, INormalizedKeyComputerFactory firstKeyNormalizerFactory,
-                        IBinaryComparatorFactory[] comparatorFactories, IAggregatorDescriptorFactory partialAggregatorFactory,
-                        IAggregatorDescriptorFactory mergeAggregatorFactory, RecordDescriptor partialAggRecordDesc,
-                        RecordDescriptor outRecordDesc, boolean finalStage);*/
+                        rdCombinedMessage, rdFinal, true);
                 setLocationConstraint(spec, globalGby);
                 spec.connect(new MToNPartitioningConnectorDescriptor(spec, partionFactory), localGby, 0, globalGby, 0);
                 return Pair.of(localGby, globalGby);
             }
         } else {
             int frameLimit = BspUtils.getGroupingMemoryLimit(conf);
-            int hashTableSize = Math.round(frameLimit / 1000f * tableSize);
+            int frameSize = BspUtils.getFrameSize(conf);
+            //int hashTableSize = Math.round(frameLimit / 1000f * tableSize);
             /**
              * construct local group-by operator
              */
@@ -1189,15 +1186,13 @@ public abstract class JobGen implements IJobGen {
                     getConfigurationFactory(), false, false);
             IAggregatorDescriptorFactory partialAggregatorFactory = DataflowUtils.getSerializableAggregatorFactory(
                     getConfigurationFactory(), false, true);
-            IBinaryHashFunctionFamily[] hashFunctionFactories = new IBinaryHashFunctionFamily[] {};
             /*IOperatorDescriptor localGby = new ExternalGroupOperatorDescriptor(spec, keyFields, frameLimit,
                     sortCmpFactories, nkmFactory, localAggregatorFactory, partialAggregatorFactory, rdUnnestedMessage,
                     new HashSpillableTableFactory(partionFactory, hashTableSize), merge ? true : false);*/
-            /*IOperatorDescriptor localGby = new ExternalGroupOperatorDescriptor(spec, tableSize, BspUtils.get,
-                    keyFields, frameLimit, sortCmpFactories, nkmFactory, localAggregatorFactory,
-                    partialAggregatorFactory, rdUnnestedMessage, new HashSpillableTableFactory(hashFunctionFactories),
-                    merge ? true : false);*/
-            IOperatorDescriptor localGby = null;
+            IOperatorDescriptor localGby = new ExternalGroupOperatorDescriptor(spec, tableSize, (long) frameSize
+                    * frameLimit, keyFields, frameLimit, sortCmpFactories, nkmFactory, localAggregatorFactory,
+                    partialAggregatorFactory, rdUnnestedMessage, rdCombinedMessage, new HashSpillableTableFactory(
+                            groupHashFamily));
             /*ExternalGroupOperatorDescriptor(IOperatorDescriptorRegistry spec, int inputSizeInTuple, long inputFileSize,
                     int[] keyFields, int framesLimit, IBinaryComparatorFactory[] comparatorFactories,
                     INormalizedKeyComputerFactory firstNormalizerFactory, IAggregatorDescriptorFactory partialAggregatorFactory,
@@ -1220,11 +1215,11 @@ public abstract class JobGen implements IJobGen {
             } else {
                 IAggregatorDescriptorFactory finalAggregatorFactory = DataflowUtils.getSerializableAggregatorFactory(
                         getConfigurationFactory(), true, true);
-                IOperatorDescriptor globalGby = null;
-                /*IOperatorDescriptor globalGby = new ExternalGroupOperatorDescriptor(spec, keyFields, frameLimit,
-                        sortCmpFactories, nkmFactory, partialAggregatorFactory, finalAggregatorFactory,
-                        rdCombinedMessage, new HashSpillableTableFactory(partionFactory, hashTableSize), false);
-                setLocationConstraint(spec, globalGby);*/
+                IOperatorDescriptor globalGby = new ExternalGroupOperatorDescriptor(spec, tableSize, (long) frameSize
+                        * frameLimit, keyFields, frameLimit, sortCmpFactories, nkmFactory, partialAggregatorFactory,
+                        finalAggregatorFactory, rdCombinedMessage, rdFinal, new HashSpillableTableFactory(
+                                groupHashFamily));
+                setLocationConstraint(spec, globalGby);
 
                 spec.connect(new MToNPartitioningConnectorDescriptor(spec, partionFactory), localGby, 0, globalGby, 0);
                 return Pair.of(localGby, globalGby);

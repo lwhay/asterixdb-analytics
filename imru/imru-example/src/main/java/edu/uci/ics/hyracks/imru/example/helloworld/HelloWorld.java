@@ -32,11 +32,10 @@ public class HelloWorld {
             // creates default arguments to run the example
             String cmdline = "";
             int totalNodes = 8;
-            boolean useExistingCluster = Client.isServerAvailable(
-                    Client.getLocalIp(), 3099);
+            boolean useExistingCluster = Client.isServerAvailable(Client.getLocalIp(), 3099);
             if (useExistingCluster) {
                 // hostname of cluster controller
-                String ip=Client.getLocalIp();
+                String ip = Client.getLocalIp();
                 cmdline += "-host " + ip + " -port 3099";
                 System.out.println("Connecting to " + Client.getLocalIp());
             } else {
@@ -49,8 +48,7 @@ public class HelloWorld {
                 System.out.println("Starting hyracks cluster");
             }
 
-            String exampleData = System.getProperty("user.home")
-                    + "/hyracks/imru/imru-example/data/helloworld";
+            String exampleData = System.getProperty("user.home") + "/hyracks/imru/imru-example/data/helloworld";
             int n = 6;
             if (useExistingCluster) {
                 cmdline += " -example-paths " + exampleData + "/hello0.txt";
@@ -59,8 +57,7 @@ public class HelloWorld {
             } else {
                 cmdline += " -example-paths NC0:" + exampleData + "/hello0.txt";
                 for (int i = 1; i < n; i++)
-                    cmdline += ",NC" + (i % totalNodes) + ":" + exampleData
-                            + "/hello" + i + ".txt";
+                    cmdline += ",NC" + (i % totalNodes) + ":" + exampleData + "/hello" + i + ".txt";
             }
             System.out.println("Using command line: " + cmdline);
             args = cmdline.split(" ");

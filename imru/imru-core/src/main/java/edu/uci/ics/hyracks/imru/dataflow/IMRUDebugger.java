@@ -19,8 +19,7 @@ public class IMRUDebugger {
                 serverSocket = new DatagramSocket();
             }
             byte[] bs = s.getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(bs, bs.length,
-                    address, 6667);
+            DatagramPacket sendPacket = new DatagramPacket(bs, bs.length, address, 6667);
             serverSocket.send(sendPacket);
         } catch (Exception e) {
             e.printStackTrace();

@@ -106,7 +106,8 @@ public class KMeansJob implements IIMRUJob<KMeansModel, DataPoint, KMeansCentroi
      * update the model using combined result
      */
     @Override
-    public KMeansModel update(IMRUContext ctx, Iterator<KMeansCentroids> input, KMeansModel model) throws IMRUDataException {
+    public KMeansModel update(IMRUContext ctx, Iterator<KMeansCentroids> input, KMeansModel model)
+            throws IMRUDataException {
         KMeansCentroids combined = reduce(ctx, input);
         boolean changed = false;
         for (int i = 0; i < k; i++)

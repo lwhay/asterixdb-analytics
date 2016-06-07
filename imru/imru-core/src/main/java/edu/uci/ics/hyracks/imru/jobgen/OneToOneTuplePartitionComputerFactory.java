@@ -22,7 +22,6 @@ import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 /**
  * A TuplePartitionComputerFactory that always sends tuples to partition 0.
- *
  * For use with LocalityAwareMToNPartitioningConnectorDescriptor.
  */
 public class OneToOneTuplePartitionComputerFactory implements ITuplePartitionComputerFactory {

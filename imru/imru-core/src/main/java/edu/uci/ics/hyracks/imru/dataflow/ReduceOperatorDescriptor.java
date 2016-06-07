@@ -17,11 +17,9 @@ package edu.uci.ics.hyracks.imru.dataflow;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Future;
 
 import org.apache.hyracks.api.context.IHyracksTaskContext;
@@ -32,12 +30,11 @@ import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
 import org.apache.hyracks.api.exceptions.HyracksDataException;
 import org.apache.hyracks.api.job.JobSpecification;
 import org.apache.hyracks.dataflow.std.base.AbstractUnaryInputUnaryOutputOperatorNodePushable;
+
 import edu.uci.ics.hyracks.imru.api.ASyncIO;
 import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
 import edu.uci.ics.hyracks.imru.api.IMRUReduceContext;
-import edu.uci.ics.hyracks.imru.data.ChunkFrameHelper;
 import edu.uci.ics.hyracks.imru.data.MergedFrames;
-import edu.uci.ics.hyracks.imru.util.Rt;
 
 /**
  * Evaluates the reduce function in an iterative map reduce update job.
@@ -47,8 +44,7 @@ import edu.uci.ics.hyracks.imru.util.Rt;
 public class ReduceOperatorDescriptor extends IMRUOperatorDescriptor {
 
     private static final long serialVersionUID = 1L;
-    private static final RecordDescriptor dummyRecordDescriptor = new RecordDescriptor(
-            new ISerializerDeserializer[1]);
+    private static final RecordDescriptor dummyRecordDescriptor = new RecordDescriptor(new ISerializerDeserializer[1]);
 
     private final IIMRUJob2<?, ?> imruSpec;
     public boolean isLocal = false;
@@ -62,18 +58,16 @@ public class ReduceOperatorDescriptor extends IMRUOperatorDescriptor {
      * @param imruSpec
      *            The IMRU Job specification
      */
-    public ReduceOperatorDescriptor(JobSpecification spec,
-            IIMRUJob2<?, ?> imruSpec, String name) {
+    public ReduceOperatorDescriptor(JobSpecification spec, IIMRUJob2<?, ?> imruSpec, String name) {
         super(spec, 1, 1, name, imruSpec);
         this.imruSpec = imruSpec;
         recordDescriptors[0] = dummyRecordDescriptor;
     }
 
     @Override
-    public IOperatorNodePushable createPushRuntime(
-            final IHyracksTaskContext ctx,
-            IRecordDescriptorProvider recordDescProvider, final int partition,
-            int nPartitions) throws HyracksDataException {
+    public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
+            IRecordDescriptorProvider recordDescProvider, final int partition, int nPartitions)
+            throws HyracksDataException {
         return new AbstractUnaryInputUnaryOutputOperatorNodePushable() {
             IMRUReduceContext imruContext;
             //            private final ChunkFrameHelper chunkFrameHelper;
@@ -84,8 +78,7 @@ public class ReduceOperatorDescriptor extends IMRUOperatorDescriptor {
             Future future;
 
             {
-                this.name = ReduceOperatorDescriptor.this.getDisplayName()
-                        + partition;
+                this.name = ReduceOperatorDescriptor.this.getDisplayName() + partition;
                 //                this.chunkFrameHelper = new ChunkFrameHelper(ctx);
                 //                this.bufferedChunks = new ArrayList<List<ByteBuffer>>();
             }
@@ -109,17 +102,15 @@ public class ReduceOperatorDescriptor extends IMRUOperatorDescriptor {
                             byte[] objectData = out.toByteArray();
                             //                            Rt.p("reduce send "
                             //                                    + MergedFrames.deserialize(objectData));
-                            IMRUDebugger.sendDebugInfo(imruContext.getNodeId()
-                                    + " reduce start " + partition);
-                            MergedFrames.serializeToFrames(imruContext, writer,
-                                    objectData, partition, imruContext
-                                            .getNodeId()
-                                            + " reduce "
-                                            + partition
-                                            + " "
+                            IMRUDebugger.sendDebugInfo(imruContext.getNodeId() + " reduce start " + partition);
+                            MergedFrames.serializeToFrames(
+                                    imruContext,
+                                    writer,
+                                    objectData,
+                                    partition,
+                                    imruContext.getNodeId() + " reduce " + partition + " "
                                             + imruContext.getOperatorName());
-                            IMRUDebugger.sendDebugInfo(imruContext.getNodeId()
-                                    + " reduce finish");
+                            IMRUDebugger.sendDebugInfo(imruContext.getNodeId() + " reduce finish");
                             //                            IMRUSerialize.serializeToFrames(imruContext,
                             //                                    writer, objectData);
                         } catch (HyracksDataException e) {
@@ -135,14 +126,11 @@ public class ReduceOperatorDescriptor extends IMRUOperatorDescriptor {
             }
 
             @Override
-            public void nextFrame(ByteBuffer encapsulatedChunk)
-                    throws HyracksDataException {
+            public void nextFrame(ByteBuffer encapsulatedChunk) throws HyracksDataException {
                 try {
                     //                    Rt.p("reduce frame");
-                    MergedFrames frames = MergedFrames.nextFrame(ctx,
-                            encapsulatedChunk, hash, imruContext.getNodeId()
-                                    + " recv " + partition + " "
-                                    + imruContext.getOperatorName());
+                    MergedFrames frames = MergedFrames.nextFrame(ctx, encapsulatedChunk, hash, imruContext.getNodeId()
+                            + " recv " + partition + " " + imruContext.getOperatorName());
                     if (frames != null) {
                         //                        Rt.p("reduce recv "
                         //                                + MergedFrames.deserialize(frames.data));

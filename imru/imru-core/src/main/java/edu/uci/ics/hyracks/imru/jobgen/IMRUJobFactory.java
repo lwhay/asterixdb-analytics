@@ -167,8 +167,7 @@ public class IMRUJobFactory {
     @SuppressWarnings("rawtypes")
     public JobSpecification generateDataGenerateJob(IIMRUDataGenerator generator) throws IOException {
         JobSpecification spec = new JobSpecification();
-        IMRUOperatorDescriptor dataLoad = new DataGeneratorOperatorDescriptor(spec, generator, inputSplits,
-                confFactory);
+        IMRUOperatorDescriptor dataLoad = new DataGeneratorOperatorDescriptor(spec, generator, inputSplits, confFactory);
         PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, dataLoad, mapOperatorLocations);
         spec.addRoot(dataLoad);
         return spec;

@@ -23,15 +23,15 @@ import java.io.Serializable;
 public class KMeansModel implements Serializable {
     Centroid[] centroids;
     public int roundsRemaining = 20;
-    public double lastDistanceSum=0;
+    public double lastDistanceSum = 0;
 
-    public KMeansModel(int k,int roundsRemaining) {
-        this.roundsRemaining=roundsRemaining;
+    public KMeansModel(int k, int roundsRemaining) {
+        this.roundsRemaining = roundsRemaining;
         centroids = new Centroid[k];
         for (int i = 0; i < k; i++)
             centroids[i] = new Centroid();
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

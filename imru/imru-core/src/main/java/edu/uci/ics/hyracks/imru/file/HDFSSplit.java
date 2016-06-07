@@ -1,12 +1,5 @@
 package edu.uci.ics.hyracks.imru.file;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Vector;
 
 //import org.apache.hadoop.conf.Configuration;
 //import org.apache.hadoop.fs.FileSystem;
@@ -15,7 +8,6 @@ import java.util.Vector;
 //import org.apache.hadoop.mapreduce.Job;
 //import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 //import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-
 
 /**
  * Separate hadoop classes to avoid uploading

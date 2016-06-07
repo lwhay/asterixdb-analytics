@@ -18,9 +18,11 @@ package edu.uci.ics.pregelix.core.jobgen;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.WritableComparator;
-
 import org.apache.hyracks.api.dataflow.value.IBinaryComparatorFactory;
+import org.apache.hyracks.api.dataflow.value.IBinaryHashFunctionFamily;
 import org.apache.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
+import org.apache.hyracks.data.std.accessors.UTF8StringBinaryHashFunctionFamily;
+
 import edu.uci.ics.pregelix.api.graph.NormalizedKeyComputer;
 import edu.uci.ics.pregelix.api.util.BspUtils;
 import edu.uci.ics.pregelix.core.runtime.touchpoint.RawBinaryComparatorFactory;
@@ -58,6 +60,17 @@ public class JobGenUtil {
      */
     public static IBinaryComparatorFactory getIBinaryComparatorFactory(int iteration, Class keyClass) {
         return RawBinaryComparatorFactory.INSTANCE;
+    }
+
+    /**
+     * get hashfunctions for an iteration, to hash messages
+     *
+     * @param iteration
+     * @param keyClass
+     * @return
+     */
+    public static IBinaryHashFunctionFamily getIBinaryHashFunctionFamily(int iteration, Class keyClass) {
+        return UTF8StringBinaryHashFunctionFamily.INSTANCE;
     }
 
     /**

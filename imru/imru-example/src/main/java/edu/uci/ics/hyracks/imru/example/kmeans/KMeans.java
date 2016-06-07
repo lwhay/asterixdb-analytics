@@ -55,14 +55,12 @@ public class KMeans {
         KMeansModel bestModel = null;
         for (int modelId = 0; modelId < 3; modelId++) {
             System.out.println("trial " + modelId);
-            KMeansModel initModel = Client.run(new RandomSelectJob(k),
-                    new KMeansModel(k, 1), args);
+            KMeansModel initModel = Client.run(new RandomSelectJob(k), new KMeansModel(k, 1), args);
             System.out.println("InitModel: " + initModel);
 
             initModel.roundsRemaining = 20;
 
-            KMeansModel finalModel = Client.run(new KMeansJob(k), initModel,
-                    args);
+            KMeansModel finalModel = Client.run(new KMeansJob(k), initModel, args);
             System.out.println("FinalModel: " + finalModel);
             System.out.println("DistanceSum: " + finalModel.lastDistanceSum);
             if (finalModel.lastDistanceSum < minDis) {

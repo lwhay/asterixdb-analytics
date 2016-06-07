@@ -60,12 +60,12 @@ public class IMRURuntimeContext implements IWorkspaceFileFactory {
      * and the others use the shared copy.
      */
     public Serializable model = null;
-    
+
     /**
-     * Output writer shared in each node in the train-merge interface. 
+     * Output writer shared in each node in the train-merge interface.
      */
-    public Vector<IFrameWriter> writers=new Vector<IFrameWriter>();
-    
+    public Vector<IFrameWriter> writers = new Vector<IFrameWriter>();
+
     /**
      * The round that the current global model was loaded in.
      */

@@ -14,16 +14,15 @@ import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
 import org.apache.hyracks.api.exceptions.HyracksDataException;
 import org.apache.hyracks.api.job.JobSpecification;
 import org.apache.hyracks.dataflow.std.base.AbstractOperatorNodePushable;
+
 import edu.uci.ics.hyracks.imru.api.IIMRUDataGenerator;
 import edu.uci.ics.hyracks.imru.api.IMRUContext;
 import edu.uci.ics.hyracks.imru.file.ConfigurationFactory;
 import edu.uci.ics.hyracks.imru.file.IMRUFileSplit;
 import edu.uci.ics.hyracks.imru.util.Rt;
 
-public class DataGeneratorOperatorDescriptor extends
-        IMRUOperatorDescriptor<Serializable, Serializable> {
-    private static final Logger LOG = Logger
-            .getLogger(DataGeneratorOperatorDescriptor.class.getName());
+public class DataGeneratorOperatorDescriptor extends IMRUOperatorDescriptor<Serializable, Serializable> {
+    private static final Logger LOG = Logger.getLogger(DataGeneratorOperatorDescriptor.class.getName());
 
     private static final long serialVersionUID = 1L;
 
@@ -31,9 +30,8 @@ public class DataGeneratorOperatorDescriptor extends
     protected final IMRUFileSplit[] inputSplits;
     IIMRUDataGenerator imruSpec;
 
-    public DataGeneratorOperatorDescriptor(JobSpecification spec,
-            IIMRUDataGenerator imruSpec, IMRUFileSplit[] inputSplits,
-            ConfigurationFactory confFactory) {
+    public DataGeneratorOperatorDescriptor(JobSpecification spec, IIMRUDataGenerator imruSpec,
+            IMRUFileSplit[] inputSplits, ConfigurationFactory confFactory) {
         super(spec, 0, 0, "parse", null);
         this.inputSplits = inputSplits;
         this.confFactory = confFactory;
@@ -41,10 +39,9 @@ public class DataGeneratorOperatorDescriptor extends
     }
 
     @Override
-    public IOperatorNodePushable createPushRuntime(
-            final IHyracksTaskContext ctx,
-            IRecordDescriptorProvider recordDescProvider, final int partition,
-            int nPartitions) throws HyracksDataException {
+    public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
+            IRecordDescriptorProvider recordDescProvider, final int partition, int nPartitions)
+            throws HyracksDataException {
         return new AbstractOperatorNodePushable() {
             private final String name;
             long startTime;
@@ -52,8 +49,7 @@ public class DataGeneratorOperatorDescriptor extends
             boolean initialized = false;
 
             {
-                name = DataGeneratorOperatorDescriptor.this.getDisplayName()
-                        + partition;
+                name = DataGeneratorOperatorDescriptor.this.getDisplayName() + partition;
             }
 
             @Override
@@ -66,8 +62,8 @@ public class DataGeneratorOperatorDescriptor extends
                 imruContext = new IMRUContext(ctx, name);
                 final IMRUFileSplit split = inputSplits[partition];
                 try {
-                    BufferedOutputStream output = new BufferedOutputStream(
-                            new FileOutputStream(split.getPath()), 1024 * 1024);
+                    BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(split.getPath()),
+                            1024 * 1024);
                     imruSpec.generate(imruContext, output);
                     output.close();
                 } catch (IOException e) {
@@ -75,14 +71,11 @@ public class DataGeneratorOperatorDescriptor extends
                     Rt.p(imruContext.getNodeId() + " " + split);
                     throw new HyracksDataException(e);
                 }
-                LOG.info("Generate input data in "
-                        + (System.currentTimeMillis() - startTime)
-                        + " milliseconds");
+                LOG.info("Generate input data in " + (System.currentTimeMillis() - startTime) + " milliseconds");
             }
 
             @Override
-            public void setOutputFrameWriter(int index, IFrameWriter writer,
-                    RecordDescriptor recordDesc) {
+            public void setOutputFrameWriter(int index, IFrameWriter writer, RecordDescriptor recordDesc) {
                 throw new IllegalArgumentException();
             }
 

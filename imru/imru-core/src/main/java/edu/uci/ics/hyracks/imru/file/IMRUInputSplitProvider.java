@@ -26,13 +26,11 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 //import org.apache.hadoop.conf.Configuration;
 //import org.apache.hadoop.mapreduce.InputSplit;
 //import org.apache.hadoop.mapreduce.Job;
 //import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 //import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-
 import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 /**
@@ -61,15 +59,14 @@ public class IMRUInputSplitProvider implements Serializable {
      *            The configuration for connecting to HDFS.
      * @throws InterruptedException
      */
-    public IMRUInputSplitProvider(String inputPaths,
-            ConfigurationFactory confFactory) throws InterruptedException {
+    public IMRUInputSplitProvider(String inputPaths, ConfigurationFactory confFactory) throws InterruptedException {
         try {
             String[] ss = inputPaths.split(",");
-//            if (confFactory == null || !confFactory.useHDFS()) {
-                splits = IMRUFileSplit.get(ss);
-//            } else {
-//                splits = HDFSSplit.get(confFactory, ss);
-//            }
+            //            if (confFactory == null || !confFactory.useHDFS()) {
+            splits = IMRUFileSplit.get(ss);
+            //            } else {
+            //                splits = HDFSSplit.get(confFactory, ss);
+            //            }
             numSplits = splits.size();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutput output = new DataOutputStream(baos);
@@ -81,16 +78,13 @@ public class IMRUInputSplitProvider implements Serializable {
         }
     }
 
-    public static IMRUFileSplit[] getInputSplits(String inputPaths)
-            throws HyracksDataException, InterruptedException {
+    public static IMRUFileSplit[] getInputSplits(String inputPaths) throws HyracksDataException, InterruptedException {
         return getInputSplits(inputPaths, null);
     }
 
-    public static IMRUFileSplit[] getInputSplits(String inputPaths,
-            ConfigurationFactory confFactory) throws HyracksDataException,
-            InterruptedException {
-        IMRUInputSplitProvider inputSplitProvider = new IMRUInputSplitProvider(
-                inputPaths, confFactory);
+    public static IMRUFileSplit[] getInputSplits(String inputPaths, ConfigurationFactory confFactory)
+            throws HyracksDataException, InterruptedException {
+        IMRUInputSplitProvider inputSplitProvider = new IMRUInputSplitProvider(inputPaths, confFactory);
         List<IMRUFileSplit> inputSplits = inputSplitProvider.getInputSplits();
         return inputSplits.toArray(new IMRUFileSplit[inputSplits.size()]);
     }
@@ -102,8 +96,7 @@ public class IMRUInputSplitProvider implements Serializable {
         return splits;
     }
 
-    private void readObject(ObjectInputStream in) throws IOException,
-            ClassNotFoundException {
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         // Reconstruct the splits array after deserialization.
         splits = new ArrayList<IMRUFileSplit>(numSplits);

@@ -4,19 +4,17 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-
 import org.apache.hyracks.api.comm.IFrameWriter;
 import org.apache.hyracks.api.context.IHyracksTaskContext;
 import org.apache.hyracks.api.exceptions.HyracksDataException;
 import org.apache.hyracks.hdfs.api.IKeyValueParser;
 import org.apache.hyracks.hdfs.api.IKeyValueParserFactory;
+
 import edu.uci.ics.hyracks.imru.api.TupleWriter;
 
-public class HDFSBlockWriter implements
-        IKeyValueParserFactory<LongWritable, Text> {
+public class HDFSBlockWriter implements IKeyValueParserFactory<LongWritable, Text> {
     @Override
-    public IKeyValueParser<LongWritable, Text> createKeyValueParser(
-            final IHyracksTaskContext ctx) {
+    public IKeyValueParser<LongWritable, Text> createKeyValueParser(final IHyracksTaskContext ctx) {
         return new IKeyValueParser<LongWritable, Text>() {
             TupleWriter tupleWriter;
 
@@ -26,8 +24,7 @@ public class HDFSBlockWriter implements
             }
 
             @Override
-            public void parse(LongWritable key, Text value,
-                    IFrameWriter writer, String fileString)
+            public void parse(LongWritable key, Text value, IFrameWriter writer, String fileString)
                     throws HyracksDataException {
                 // TODO Auto-generated method stub
                 try {

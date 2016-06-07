@@ -23,6 +23,7 @@ import org.apache.hyracks.api.dataflow.IConnectorDescriptor;
 import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
 import org.apache.hyracks.api.job.JobSpecification;
 import org.apache.hyracks.dataflow.std.connectors.LocalityAwareMToNPartitioningConnectorDescriptor;
+
 import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
 import edu.uci.ics.hyracks.imru.dataflow.ReduceOperatorDescriptor;
 
@@ -61,7 +62,7 @@ public class ReduceAggregationTreeFactory {
      * @param imruSpec
      *            The IMRU job specification.
      */
-    @SuppressWarnings( { "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     public static void buildAggregationTree(JobSpecification spec, IOperatorDescriptor producerOp, int producerPort,
             int producerOpCount, IOperatorDescriptor consumerOp, int consumerPort, IConnectorDescriptor consumerConn,
             int fanIn, boolean useLocalCombiners, String[] producerOpLocations, IIMRUJob2 imruSpec) {
@@ -72,7 +73,7 @@ public class ReduceAggregationTreeFactory {
         int numLevels = levelNodeCounts.length;
         ReduceOperatorDescriptor[] aggregatorOperators = new ReduceOperatorDescriptor[numLevels];
         for (int level = 0; level < numLevels; level++) {
-            aggregatorOperators[level] = new ReduceOperatorDescriptor(spec, imruSpec, "NAryReducerL" + level+"_");
+            aggregatorOperators[level] = new ReduceOperatorDescriptor(spec, imruSpec, "NAryReducerL" + level + "_");
             aggregatorOperators[level].level = level;
             //            aggregatorOperators[level].setDisplayName("ReduceOperatorDescriptor(level " + level + ")");
             PartitionConstraintHelper.addPartitionCountConstraint(spec, aggregatorOperators[level],
@@ -108,8 +109,8 @@ public class ReduceAggregationTreeFactory {
      *         the root (but not including the root).
      */
     public static Integer[] aggregationTreeNodeCounts(int size, int fanIn) {
-        if (size==1)
-            return new Integer[] {1};
+        if (size == 1)
+            return new Integer[] { 1 };
         List<Integer> levels = new ArrayList<Integer>();
         while (size > 1) {
             size = (int) Math.round(Math.ceil((1.0 * size) / fanIn));

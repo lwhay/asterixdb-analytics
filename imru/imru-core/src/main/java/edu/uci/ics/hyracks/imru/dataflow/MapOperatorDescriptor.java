@@ -63,8 +63,8 @@ import edu.uci.ics.hyracks.imru.util.Rt;
  *            persisted between iterations.
  * @author Josh Rosen
  */
-public class MapOperatorDescriptor<Model extends Serializable, Data extends Serializable>
-        extends IMRUOperatorDescriptor<Model, Data> {
+public class MapOperatorDescriptor<Model extends Serializable, Data extends Serializable> extends
+        IMRUOperatorDescriptor<Model, Data> {
 
     private static Logger LOG = Logger.getLogger(MapOperatorDescriptor.class.getName());
 
@@ -102,7 +102,7 @@ public class MapOperatorDescriptor<Model extends Serializable, Data extends Seri
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
             IRecordDescriptorProvider recordDescProvider, final int partition, int nPartitions)
-                    throws HyracksDataException {
+            throws HyracksDataException {
         return new AbstractUnaryOutputSourceOperatorNodePushable() {
             private final IHyracksTaskContext fileCtx;
             private final String name;
@@ -131,8 +131,8 @@ public class MapOperatorDescriptor<Model extends Serializable, Data extends Seri
                     }
                     synchronized (context.envLock) {
                         if (context.modelAge < roundNum) {
-                            throw new HyracksDataException(
-                                    "Model was not spread to " + new IMRUContext(ctx, name).getNodeId());
+                            throw new HyracksDataException("Model was not spread to "
+                                    + new IMRUContext(ctx, name).getNodeId());
                         }
                     }
 
@@ -234,9 +234,14 @@ public class MapOperatorDescriptor<Model extends Serializable, Data extends Seri
                             //                                    + MergedFrames.deserialize(objectData));
 
                             IMRUDebugger.sendDebugInfo(imruContext.getNodeId() + " map start " + partition);
-                            MergedFrames.serializeToFrames(imruContext, writer, objectData, partition,
-                                    imruContext.getNodeId() + " map " + partition + " "
-                                            + imruContext.getOperatorName());
+                            MergedFrames
+                                    .serializeToFrames(
+                                            imruContext,
+                                            writer,
+                                            objectData,
+                                            partition,
+                                            imruContext.getNodeId() + " map " + partition + " "
+                                                    + imruContext.getOperatorName());
                             IMRUDebugger.sendDebugInfo(imruContext.getNodeId() + " map finish");
                             //                            IMRUSerialize.serializeToFrames(imruContext,
                             //                                    writer, objectData);

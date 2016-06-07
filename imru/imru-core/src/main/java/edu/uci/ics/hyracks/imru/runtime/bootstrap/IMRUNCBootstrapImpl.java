@@ -23,13 +23,11 @@ import org.apache.hyracks.api.application.INCApplicationEntryPoint;
  * Bootstrap for creating the IMRU application context on node controllers.
  */
 public class IMRUNCBootstrapImpl implements INCApplicationEntryPoint {
-    private static final Logger LOGGER = Logger
-            .getLogger(IMRUNCBootstrapImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(IMRUNCBootstrapImpl.class.getName());
     private INCApplicationContext appCtx;
 
     @Override
-    public void start(INCApplicationContext appCtx, String[] arg1)
-            throws Exception {
+    public void start(INCApplicationContext appCtx, String[] arg1) throws Exception {
         this.appCtx = appCtx;
         LOGGER.info("Starting NC Bootstrap");
         IMRURuntimeContext rCtx = new IMRURuntimeContext(appCtx);
@@ -46,8 +44,7 @@ public class IMRUNCBootstrapImpl implements INCApplicationEntryPoint {
     @Override
     public void stop() throws Exception {
         LOGGER.info("Stopping IMRU NC Bootstrap");
-        IMRURuntimeContext rCtx = (IMRURuntimeContext) appCtx
-                .getApplicationObject();
+        IMRURuntimeContext rCtx = (IMRURuntimeContext) appCtx.getApplicationObject();
         rCtx.close();
     }
 }

@@ -27,13 +27,13 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
-
 import org.apache.hyracks.api.client.HyracksConnection;
 import org.apache.hyracks.api.deployment.DeploymentId;
 import org.apache.hyracks.api.job.JobFlag;
 import org.apache.hyracks.api.job.JobId;
 import org.apache.hyracks.api.job.JobSpecification;
 import org.apache.hyracks.api.job.JobStatus;
+
 import edu.uci.ics.hyracks.imru.api.IIMRUDataGenerator;
 import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
 import edu.uci.ics.hyracks.imru.jobgen.IMRUJobFactory;
@@ -48,8 +48,7 @@ import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUConnection;
  * @author Josh Rosen
  */
 public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
-    private final static Logger LOGGER = Logger.getLogger(IMRUDriver.class
-            .getName());
+    private final static Logger LOGGER = Logger.getLogger(IMRUDriver.class.getName());
     private final IIMRUJob2<Model, Data> imruSpec;
     private Model model;
     private final HyracksConnection hcc;
@@ -86,9 +85,8 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
      * @param app
      *            The application name to use when running the jobs.
      */
-    public IMRUDriver(HyracksConnection hcc, DeploymentId deploymentId,
-            IMRUConnection imruConnection, IIMRUJob2<Model, Data> imruSpec,
-            Model initialModel, IMRUJobFactory jobFactory, Configuration conf,
+    public IMRUDriver(HyracksConnection hcc, DeploymentId deploymentId, IMRUConnection imruConnection,
+            IIMRUJob2<Model, Data> imruSpec, Model initialModel, IMRUJobFactory jobFactory, Configuration conf,
             String app) {
         this.imruSpec = imruSpec;
         this.model = initialModel;
@@ -129,8 +127,7 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
         // For the first round, the initial model is written by the
         // driver.
         if (localIntermediateModelPath != null)
-            writeModelToFile(model, new File(localIntermediateModelPath,
-                    getModelName() + "-iter" + 0));
+            writeModelToFile(model, new File(localIntermediateModelPath, getModelName() + "-iter" + 0));
 
         imruConnection.uploadModel(this.getModelName(), model);
 
@@ -140,8 +137,7 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
             long loadStart = System.currentTimeMillis();
             JobStatus status = runDataLoad();
             long loadEnd = System.currentTimeMillis();
-            LOGGER.info("Finished data load in " + (loadEnd - loadStart)
-                    + " milliseconds");
+            LOGGER.info("Finished data load in " + (loadEnd - loadStart) + " milliseconds");
             if (status == JobStatus.FAILURE) {
                 LOGGER.severe("Failed during data load");
                 return JobStatus.FAILURE;
@@ -156,8 +152,7 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
             long start = System.currentTimeMillis();
             JobStatus status = runIMRUIteration(getModelName(), iterationCount);
             long end = System.currentTimeMillis();
-            LOGGER.info("Finished round " + iterationCount + " in "
-                    + (end - start) + " milliseconds");
+            LOGGER.info("Finished round " + iterationCount + " in " + (end - start) + " milliseconds");
 
             if (status == JobStatus.FAILURE) {
                 LOGGER.severe("Failed during iteration " + iterationCount);
@@ -167,8 +162,7 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
             if (model == null)
                 throw new Exception("Can't download model");
             if (localIntermediateModelPath != null)
-                writeModelToFile(model, new File(localIntermediateModelPath,
-                        getModelName() + "-iter" + iterationCount));
+                writeModelToFile(model, new File(localIntermediateModelPath, getModelName() + "-iter" + iterationCount));
 
             // TODO: clean up temporary files
         } while (!imruSpec.shouldTerminate(model));
@@ -203,12 +197,10 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
      * @throws Exception
      */
     private JobStatus runDataLoad() throws Exception {
-        JobSpecification job = jobFactory.generateDataLoadJob(imruSpec,
-                memCache);
+        JobSpecification job = jobFactory.generateDataLoadJob(imruSpec, memCache);
         //                byte[] bs=JavaSerializationUtils.serialize(job);
         //                Rt.p("Dataload job size: "+bs.length);
-        JobId jobId = hcc.startJob(deploymentId, job, EnumSet
-                .of(JobFlag.PROFILE_RUNTIME));
+        JobId jobId = hcc.startJob(deploymentId, job, EnumSet.of(JobFlag.PROFILE_RUNTIME));
         hcc.waitForCompletion(jobId);
         //        JobId jobId = hcc.createJob(app, job);
         //        hcc.start(jobId);
@@ -216,13 +208,11 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
         return hcc.getJobStatus(jobId);
     }
 
-    public JobStatus runDataGenerator(IIMRUDataGenerator generator)
-            throws Exception {
+    public JobStatus runDataGenerator(IIMRUDataGenerator generator) throws Exception {
         JobSpecification job = jobFactory.generateDataGenerateJob(generator);
         //                byte[] bs=JavaSerializationUtils.serialize(job);
         //                Rt.p("Data generator job size: "+bs.length);
-        JobId jobId = hcc.startJob(deploymentId, job, EnumSet
-                .of(JobFlag.PROFILE_RUNTIME));
+        JobId jobId = hcc.startJob(deploymentId, job, EnumSet.of(JobFlag.PROFILE_RUNTIME));
         hcc.waitForCompletion(jobId);
         //        JobId jobId = hcc.createJob(app, job);
         //        hcc.start(jobId);
@@ -248,29 +238,24 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
      * @return The JobStatus of the job after completion or failure.
      * @throws Exception
      */
-    private JobStatus runIMRUIteration(String modelName, int iterationNum)
-            throws Exception {
-        JobSpecification spreadjob = jobFactory.generateModelSpreadJob(
-                deploymentId, modelName, iterationNum);
+    private JobStatus runIMRUIteration(String modelName, int iterationNum) throws Exception {
+        JobSpecification spreadjob = jobFactory.generateModelSpreadJob(deploymentId, modelName, iterationNum);
         //                byte[] bs=JavaSerializationUtils.serialize(spreadjob);
         //              Rt.p("IMRU job size: "+bs.length);
-        JobId spreadjobId = hcc.startJob(deploymentId, spreadjob, EnumSet
-                .of(JobFlag.PROFILE_RUNTIME));
+        JobId spreadjobId = hcc.startJob(deploymentId, spreadjob, EnumSet.of(JobFlag.PROFILE_RUNTIME));
         //        JobId jobId = hcc.createJob(app, job);
         //        hcc.start(jobId);
         hcc.waitForCompletion(spreadjobId);
         if (hcc.getJobStatus(spreadjobId) == JobStatus.FAILURE)
             return JobStatus.FAILURE;
 
-        JobSpecification job = jobFactory.generateJob(imruSpec, iterationNum,
-                modelName, noDiskCache);
+        JobSpecification job = jobFactory.generateJob(imruSpec, iterationNum, modelName, noDiskCache);
         if (frameSize != 0)
             job.setFrameSize(frameSize);
         LOGGER.info("job frame size " + job.getFrameSize());
         //                byte[] bs=JavaSerializationUtils.serialize(job);
         //              Rt.p("IMRU job size: "+bs.length);
-        JobId jobId = hcc.startJob(deploymentId, job, EnumSet
-                .of(JobFlag.PROFILE_RUNTIME));
+        JobId jobId = hcc.startJob(deploymentId, job, EnumSet.of(JobFlag.PROFILE_RUNTIME));
         //        JobId jobId = hcc.createJob(app, job);
         //        hcc.start(jobId);
         hcc.waitForCompletion(jobId);
@@ -286,8 +271,7 @@ public class IMRUDriver<Model extends Serializable, Data extends Serializable> {
      *            The DFS file to write the updated model to.
      * @throws IOException
      */
-    private void writeModelToFile(Serializable model, File modelPath)
-            throws IOException {
+    private void writeModelToFile(Serializable model, File modelPath) throws IOException {
         modelPath = explain(modelPath);
         OutputStream fileOutput;
         File file = new File(modelPath.toString());

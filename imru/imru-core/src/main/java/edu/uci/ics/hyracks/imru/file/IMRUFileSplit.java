@@ -15,16 +15,16 @@ import java.util.Vector;
 
 public class IMRUFileSplit implements Serializable {
     String path;
-//    HDFSSplit split;
+    //    HDFSSplit split;
     Hashtable<String, String> params;
 
     public IMRUFileSplit(String path) {
         this.path = path;
     }
 
-//    public IMRUFileSplit(HDFSSplit split) {
-//        this.split = split;
-//    }
+    //    public IMRUFileSplit(HDFSSplit split) {
+    //        this.split = split;
+    //    }
 
     public boolean isOnHDFS() {
         return path == null;
@@ -56,15 +56,15 @@ public class IMRUFileSplit implements Serializable {
     }
 
     public boolean isDirectory() throws IOException {
-//        if (path != null)
-            return new File(path).isDirectory();
-//        else
-//            return split.isDirectory();
+        //        if (path != null)
+        return new File(path).isDirectory();
+        //        else
+        //            return split.isDirectory();
     }
 
-//    public String[] getLocations() throws IOException {
-//        return split.getLocations();
-//    }
+    //    public String[] getLocations() throws IOException {
+    //        return split.getLocations();
+    //    }
 
     public static List<IMRUFileSplit> get(String[] paths) {
         Vector<IMRUFileSplit> list = new Vector<IMRUFileSplit>(paths.length);
@@ -79,34 +79,34 @@ public class IMRUFileSplit implements Serializable {
         char[] cs = new char[n];
         for (int i = 0; i < n; i++)
             cs[i] = input.readChar();
-//        if (hdfs) {
-//            split = new HDFSSplit(new String(cs));
-//        } else {
-            path = new String(cs);
-//        }
+        //        if (hdfs) {
+        //            split = new HDFSSplit(new String(cs));
+        //        } else {
+        path = new String(cs);
+        //        }
     }
 
     public void write(DataOutput output) throws IOException {
-//        if (path != null) {
-            output.writeBoolean(false); //file system
-            output.writeInt(path.length());
-            output.writeChars(path);
-//        } else {
-//            output.writeBoolean(true); //HDFS
-//            output.writeInt(split.path.length());
-//            output.writeChars(split.path);
-//        }
+        //        if (path != null) {
+        output.writeBoolean(false); //file system
+        output.writeInt(path.length());
+        output.writeChars(path);
+        //        } else {
+        //            output.writeBoolean(true); //HDFS
+        //            output.writeInt(split.path.length());
+        //            output.writeChars(split.path);
+        //        }
     }
 
     public InputStream getInputStream() throws IOException {
-//        if (path != null) {
-            String path = this.path;
-            if (path.indexOf(':') > 0)
-                path = path.substring(path.indexOf(':') + 1);
-            return new FileInputStream(path);
-//        } else {
-//            return split.getInputStream();
-//        }
+        //        if (path != null) {
+        String path = this.path;
+        if (path.indexOf(':') > 0)
+            path = path.substring(path.indexOf(':') + 1);
+        return new FileInputStream(path);
+        //        } else {
+        //            return split.getInputStream();
+        //        }
     }
 
     public BufferedReader getReader() throws IOException {
@@ -116,6 +116,6 @@ public class IMRUFileSplit implements Serializable {
     @Override
     public String toString() {
         return path;
-//        return path != null ? path : split.toString();
+        //        return path != null ? path : split.toString();
     }
 }

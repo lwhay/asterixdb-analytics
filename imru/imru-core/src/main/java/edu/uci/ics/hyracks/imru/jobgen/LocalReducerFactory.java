@@ -32,6 +32,7 @@ import org.apache.hyracks.api.job.JobSpecification;
 import org.apache.hyracks.dataflow.std.connectors.HashtableLocalityMap;
 import org.apache.hyracks.dataflow.std.connectors.ILocalityMap;
 import org.apache.hyracks.dataflow.std.connectors.LocalityAwareMToNPartitioningConnectorDescriptor;
+
 import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
 import edu.uci.ics.hyracks.imru.dataflow.ReduceOperatorDescriptor;
 
@@ -61,13 +62,13 @@ public class LocalReducerFactory {
      * @param imruSpec
      *            The IMRU spec used by the job
      */
-    @SuppressWarnings( { "rawtypes" })
+    @SuppressWarnings({ "rawtypes" })
     public static void addLocalReducers(JobSpecification spec, IOperatorDescriptor producerOp, int producerPort,
             String[] producerLocations, IOperatorDescriptor consumerOp, int consumerPort,
             IConnectorDescriptor consumerConn, IIMRUJob2 imruSpec) {
         ReduceOperatorDescriptor localReducer = new ReduceOperatorDescriptor(spec, imruSpec, "localReducer");
-        localReducer.level=-1;
-        localReducer.isLocal=true;
+        localReducer.level = -1;
+        localReducer.isLocal = true;
         // Construct the locality map used to route tuples to local
         // reducers:
         Set<String> ncsWithMapOperators = new HashSet<String>(Arrays.asList(producerLocations));

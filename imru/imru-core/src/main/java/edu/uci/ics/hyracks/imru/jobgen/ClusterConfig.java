@@ -33,13 +33,13 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.hadoop.mapred.InputSplit;
-
 import org.apache.hyracks.api.client.HyracksConnection;
 import org.apache.hyracks.api.client.NodeControllerInfo;
 import org.apache.hyracks.api.constraints.PartitionConstraintHelper;
 import org.apache.hyracks.api.exceptions.HyracksDataException;
 import org.apache.hyracks.api.exceptions.HyracksException;
 import org.apache.hyracks.api.job.JobSpecification;
+
 import edu.uci.ics.hyracks.imru.dataflow.IMRUOperatorDescriptor;
 import edu.uci.ics.hyracks.imru.file.IMRUFileSplit;
 
@@ -98,13 +98,13 @@ public class ClusterConfig {
      * @throws HyracksException
      */
     public static String[] setLocationConstraint(JobSpecification spec, IMRUOperatorDescriptor operator,
-            InputSplit[] hdfsSplits,IMRUFileSplit[] splits, Random random) throws IOException {
+            InputSplit[] hdfsSplits, IMRUFileSplit[] splits, Random random) throws IOException {
         if (NCs == null)
             loadClusterConfig();
         if (splits.length == 0)
             return new String[0];
 
-        if (hdfsSplits==null) {
+        if (hdfsSplits == null) {
             int partitionCount = splits.length;
             String[] partitionLocations = new String[partitionCount];
             for (int partition = 0; partition < partitionCount; partition++) {
@@ -204,7 +204,7 @@ public class ClusterConfig {
                     sb.append(".");
                 sb.append(b & 0xFF);
             }
-//            LOG.info(id + " " + sb);
+            //            LOG.info(id + " " + sb);
             ncNames.add(id);
             List<String> ncs = ipToNcMapping.get(id);
             if (ncs == null) {
