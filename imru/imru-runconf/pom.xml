@@ -7,8 +7,8 @@
 		<artifactId>imru</artifactId>
 		<version>0.2.17-SNAPSHOT</version>
 	</parent>
-	<artifactId>imru-classification</artifactId>
-	<name>imru-classification</name>
+	<artifactId>imru-runconf</artifactId>
+	<name>imru-runconf</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -132,13 +132,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-                <dependency>
-			<groupId>org.apache.hyracks</groupId>
-                        <artifactId>imru-runconf</artifactId>
-                        <version>0.2.17-SNAPSHOT</version>
-                        <type>jar</type>
-                        <scope>compile</scope>
-                </dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-control-cc</artifactId>

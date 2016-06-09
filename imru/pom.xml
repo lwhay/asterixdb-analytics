@@ -148,6 +148,7 @@
     <module>imru-core</module>
     <module>imru-example</module>
     <module>imru-dist</module>
+    <module>imru-runconf</module>
     <module>imru-runtime</module>
     <module>imru-dataflow</module>
     <module>imru-dataflow-std</module>
