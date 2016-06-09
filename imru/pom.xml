@@ -148,5 +148,13 @@
     <module>imru-core</module>
     <module>imru-example</module>
     <module>imru-dist</module>
+    <module>imru-runtime</module>
+    <module>imru-dataflow</module>
+    <module>imru-dataflow-std</module>
+    <module>imru-preprocess</module>
+    <module>imru-classification</module>
+    <module>imru-clustering</module>
+    <module>imru-verify</module>
+    <module>imru-benchmark</module>
   </modules>
 </project>
